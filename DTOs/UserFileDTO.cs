@@ -8,7 +8,7 @@ namespace MiniDrive.DTOs
         public string? FilePath { get; set; }
         public int? UserId { get; set; }
         public DateTime? CreatedAt { get; set; } 
-        public DateTime? UpdateAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
         public int? FolderId { get; set; }
         public string? Status { get; set; } = "active";
     }

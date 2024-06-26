@@ -5,7 +5,7 @@ using MiniDrive.Services.Interfaces;
 
 namespace MiniDrive.Controllers.Folders
 {
-    [Authorize]
+    //[Authorize]
     public class FolderDeleteController : ControllerBase
     {
         private readonly IFolderRepository _folderRepository;

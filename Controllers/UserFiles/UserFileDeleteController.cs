@@ -5,7 +5,7 @@ using MiniDrive.Services.Interfaces;
 
 namespace MiniDrive.Controllers.UserFiles
 {
-    [Authorize]
+    //[Authorize]
     public class UserFileDeleteController : ControllerBase
     {
         private readonly IUserFileRepository _userfileRepository;
