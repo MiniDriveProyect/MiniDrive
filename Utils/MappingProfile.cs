@@ -13,6 +13,9 @@ namespace MiniDrive.Utils
 
             CreateMap<UserFileDTO, UserFile>();
             CreateMap<UserFile, UserFileDTO>().ReverseMap();
+
+            CreateMap<UserDTO, User>();
+            CreateMap<User, UserDTO>().ReverseMap();
         }
     }
 }
