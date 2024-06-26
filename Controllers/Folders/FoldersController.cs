@@ -9,7 +9,7 @@ using MiniDrive.Services.Interfaces;
 
 namespace MiniDrive.Controllers.Folders
 {
-    [Authorize]
+    //[Authorize]
     public class FoldersController : ControllerBase
     {
         private readonly IFolderRepository _folderRepository;

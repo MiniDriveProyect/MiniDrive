@@ -6,7 +6,7 @@ using MiniDrive.Services.Interfaces;
 
 namespace MiniDrive.Controllers.Folders
 {
-    [Authorize]
+    //[Authorize]
     public class FolderUpdateController : ControllerBase
     {
         private readonly IFolderRepository _folderRepository;
