@@ -1,32 +1,92 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using MiniDrive.Services;
+using MiniDrive.Models;
+//using MiniDrive.DTOs;
+using System.Threading.Tasks;
+using MiniDrive.Services.Interfaces;
 
 namespace MiniDrive.Controllers.Auth
 {
-    [Route("[controller]")]
-    public class AuthController : Controller
+    public class AuthController : ControllerBase
     {
-        private readonly ILogger<AuthController> _logger;
+        private readonly IAuthRepository _authRepository;
 
-        public AuthController(ILogger<AuthController> logger)
+        public AuthController(IAuthRepository authRepository)
         {
-            _logger = logger;
+            _authRepository = authRepository;
         }
 
-        public IActionResult Index()
+/*         [HttpPost]
+        [Route("api/register")]
+        public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
         {
-            return View();
-        }
+            try
+            {
+                var result = await _authRepository.Register(registerDTO);
+                if (!result.Success)
+                {
+                    return BadRequest(new
+                    {
+                        status = StatusCodes.Status400BadRequest,
+                        message = result.Message,
+                        error = true
+                    });
+                }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+                return Ok(new
+                {
+                    status = StatusCodes.Status200OK,
+                    message = "Usuario registrado con éxito",
+                    error = false
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new
+                {
+                    status = StatusCodes.Status500InternalServerError,
+                    message = "Error interno del servidor",
+                    error = true,
+                    errorMessage = ex.Message
+                });
+            }
+        } */
+
+/*         [HttpPost]
+        [Route("api/login")]
+        public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
-            return View("Error!");
-        }
+            try
+            {
+                var result = await _authRepository.Login(loginDTO);
+                if (!result.Success)
+                {
+                    return Unauthorized(new
+                    {
+                        status = StatusCodes.Status401Unauthorized,
+                        message = result.Message,
+                        error = true
+                    });
+                }
+
+                return Ok(new
+                {
+                    status = StatusCodes.Status200OK,
+                    message = "Inicio de sesión exitoso",
+                    token = result.Token,
+                    error = false
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new
+                {
+                    status = StatusCodes.Status500InternalServerError,
+                    message = "Error interno del servidor",
+                    error = true,
+                    errorMessage = ex.Message
+                });
+            }
+        } */
     }
 }
