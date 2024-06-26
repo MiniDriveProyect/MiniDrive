@@ -8,9 +8,9 @@ namespace MiniDrive.Services.Interfaces
     {
         Task<(UserFile userFile, string message, HttpStatusCode statusCode)> Add(UserFileDTO userFile);
         Task<(UserFile userFile, string message, HttpStatusCode statusCode)> Update(int id, UserFileDTO userFile);
-        Task<(UserFile userFile, string message, HttpStatusCode statusCode)> InactivateUserFile(int id);
-        Task<(UserFile userFile, string message, HttpStatusCode statusCode)> ActivateUserFile(int id);
-        Task<(IEnumerable<UserFile> userFiles, string message, HttpStatusCode statusCode)> GetAllInactive();
+        Task<(UserFile userFile, string message, HttpStatusCode statusCode)> Delete(int id);
+        Task<(UserFile userFile, string message, HttpStatusCode statusCode)> Restore(int id);
+        Task<(IEnumerable<UserFile> userFiles, string message, HttpStatusCode statusCode)> GetAllDeleted();
         Task<(IEnumerable<UserFile> userFiles, string message, HttpStatusCode statusCode)> GetAll();
         Task<(UserFile userFile, string message, HttpStatusCode statusCode)> GetById(int id);
     }
