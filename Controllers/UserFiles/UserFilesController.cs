@@ -33,7 +33,7 @@ namespace MiniDrive.Controllers.UserFiles
         }
 
         [HttpGet]
-        [Route("api/userfiles")]
+        [Route("api/userfiles/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
         try

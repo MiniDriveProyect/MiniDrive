@@ -33,7 +33,7 @@ namespace MiniDrive.Controllers.Folders
         }
 
         [HttpGet]
-        [Route("api/folders")]
+        [Route("api/folders/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             try

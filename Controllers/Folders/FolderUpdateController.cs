@@ -21,7 +21,7 @@ namespace MiniDrive.Controllers.Folders
             _folderRepository = folderRepository;
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("api/folder")]
         public async Task<IActionResult> UpdateFolder(int id, [FromBody] FolderDTO folderDTO)
         {

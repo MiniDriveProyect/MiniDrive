@@ -21,7 +21,7 @@ namespace MiniDrive.Controllers.UserFiles
             _userfileRepository = userfileRepository;
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("api/userfile")]
         public async Task<IActionResult> Update(int id, [FromBody] UserFileDTO userfileDTO)
         {
