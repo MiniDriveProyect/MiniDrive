@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+
 
 namespace MiniDrive.Models
 {
@@ -14,7 +11,7 @@ namespace MiniDrive.Models
         public int ParentFolderId { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdateAt { get; set; }
-        public string Status { get; set; } = "Active";
+        public string Status { get; set; } = "active";
         public User? User { get; set; }
         [JsonIgnore]
         public ICollection<Folder>? Folders { get; set; }
