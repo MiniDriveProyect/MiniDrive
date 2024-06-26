@@ -17,7 +17,7 @@ namespace MiniDrive.Controllers.Folders
 
         [HttpPost]
         [Route("api/folder")]
-        public async Task<ActionResult<Folder>> PostFolder( [FromBody] FolderDTO folder)
+        public async Task<ActionResult<Folder>> PostFolder([FromBody] FolderDTO folder)
         {
             if (!ModelState.IsValid)
             {
@@ -29,7 +29,8 @@ namespace MiniDrive.Controllers.Folders
                     errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage))
                 });
             }
-            try{  
+            try
+            {
                 await _folderRepository.Add(folder);
                 return Created("", new
                 {

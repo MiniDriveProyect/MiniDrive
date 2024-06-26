@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MiniDrive.Services;
 using MiniDrive.Models;
-//using MiniDrive.DTOs;
 using System.Threading.Tasks;
 using MiniDrive.Services.Interfaces;
 
@@ -36,37 +35,37 @@ namespace MiniDrive.Controllers.UserFiles
         [Route("api/userfiles/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-        try
-        {
-            var (userFile, message, statusCode) = await _userfileRepository.GetById(id);
-            if (userFile == null)
+            try
             {
-                return StatusCode((int)statusCode, new
+                var (userFile, message, statusCode) = await _userfileRepository.GetById(id);
+                if (userFile == null)
                 {
-                    status = statusCode,
-                    message,
-                    error = true
+                    return StatusCode((int)statusCode, new
+                    {
+                        status = statusCode,
+                        message,
+                        error = true
+                    });
+                }
+
+                return Ok(new
+                {
+                    status = StatusCodes.Status200OK,
+                    message = "Archivo encontrado exitosamente",
+                    error = false,
+                    userFile
                 });
             }
-
-            return Ok(new
+            catch (Exception ex)
             {
-                status = StatusCodes.Status200OK,
-                message = "Archivo encontrado exitosamente",
-                error = false,
-                userFile
-            });
+                return StatusCode(StatusCodes.Status500InternalServerError, new
+                {
+                    status = StatusCodes.Status500InternalServerError,
+                    message = "Error interno del servidor",
+                    error = true,
+                    errorMessage = ex.Message
+                });
+            }
         }
-        catch (Exception ex)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, new
-            {
-                status = StatusCodes.Status500InternalServerError,
-                message = "Error interno del servidor",
-                error = true,
-                errorMessage = ex.Message
-            });
-        }
-    }
     }
 }

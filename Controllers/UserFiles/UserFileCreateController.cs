@@ -17,7 +17,7 @@ namespace MiniDrive.Controllers.UserFiles
 
         [HttpPost]
         [Route("api/userfile")]
-        public async Task<ActionResult<UserFile>> PostMarketing( [FromBody] UserFileDTO userfile)
+        public async Task<ActionResult<UserFile>> PostMarketing([FromBody] UserFileDTO userfile)
         {
             if (!ModelState.IsValid)
             {
@@ -29,7 +29,8 @@ namespace MiniDrive.Controllers.UserFiles
                     errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage))
                 });
             }
-            try{  
+            try
+            {
                 await _userfileRepository.Add(userfile);
                 return Created("", new
                 {
