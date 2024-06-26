@@ -42,7 +42,7 @@ namespace MiniDrive.Services.Repositories
 
         public async Task<(IEnumerable<Folder> folders, string message, HttpStatusCode statusCode)> GetAll()
         {
-            var folders = await _context.Folders.Include(f => f.UserFiles).Include(f => f.User).Where(f => f.Status!.ToLower() == "active").ToListAsync();
+            var folders = await _context.Folders.Include(f => f.UserFiles!).Include(f => f.Folders!).Include(f => f.User).Where(f => f.Status!.ToLower() == "active").ToListAsync();
             if (folders.Any())
                 return (folders, "Folders have been successfully obtained.", HttpStatusCode.OK);
             else

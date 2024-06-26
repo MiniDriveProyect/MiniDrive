@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using MiniDrive.Data;
+using MiniDrive.Utils;
 using CouponApi.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -22,7 +23,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
    );
 
 // AutoMapper configuration
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 // Repositories scopes
 builder.Services.AddRepositories(Assembly.GetExecutingAssembly());
