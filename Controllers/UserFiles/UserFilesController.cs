@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MiniDrive.Services;
 using MiniDrive.Models;
-using System.Threading.Tasks;
 using MiniDrive.Services.Interfaces;
 
 
@@ -19,7 +18,7 @@ namespace MiniDrive.Controllers.UserFiles
         }
 
         [HttpGet]
-        [Route("/api/userfiles")]
+        [Route("/api/userFiles")]
         public async Task<ActionResult<IEnumerable<UserFile>>> GetAll(int userId)
         {
             try
@@ -29,7 +28,7 @@ namespace MiniDrive.Controllers.UserFiles
                 {
                     return NotFound(message);
                 }
-                
+
                 return Ok(new
                 {
                     Status = statusCode,
@@ -39,12 +38,12 @@ namespace MiniDrive.Controllers.UserFiles
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Error obtaining userFiles: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error obtaining user files: {ex.Message}");
             }
         }
 
         [HttpGet]
-        [Route("api/userfiles/{id}")]
+        [Route("api/userFiles/{id}")]
         public async Task<IActionResult> GetById(int id, int userId)
         {
             try
@@ -52,30 +51,30 @@ namespace MiniDrive.Controllers.UserFiles
                 var (userFile, message, statusCode) = await _userFileRepository.GetById(id, userId);
                 if (userFile == null)
                 {
-                    return StatusCode((int)statusCode, new
+                    return NotFound(new
                     {
-                        status = statusCode,
-                        message,
-                        error = true
+                        Status = statusCode,
+                        Message = message,
+                        Error = true
                     });
                 }
 
                 return Ok(new
                 {
-                    status = StatusCodes.Status200OK,
-                    message = "Archivo encontrado exitosamente",
-                    error = false,
-                    userFile
+                    Status = statusCode,
+                    Message = message,
+                    UserFile = userFile,
+                    Error = false
                 });
             }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
-                    status = StatusCodes.Status500InternalServerError,
-                    message = "Error interno del servidor",
-                    error = true,
-                    errorMessage = ex.Message
+                    Status = StatusCodes.Status500InternalServerError,
+                    Message = "Internal Server Error",
+                    Error = true,
+                    ErrorMessage = ex.Message
                 });
             }
         }

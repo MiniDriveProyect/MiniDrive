@@ -23,30 +23,31 @@ namespace MiniDrive.Controllers.Folders
             {
                 return BadRequest(new
                 {
-                    status = StatusCodes.Status400BadRequest,
-                    message = "La solicitud contiene datos no válidos.",
-                    error = true,
-                    errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage))
+                    Status = StatusCodes.Status400BadRequest,
+                    Message = "The request contains invalid data.",
+                    Error = true,
+                    Errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage))
                 });
             }
             try
             {
-                await _folderRepository.Add(folder);
-                return Created("", new
+                var (newFolder, message, statusCode) = await _folderRepository.Add(folder);
+                return Created("",new
                 {
-                    status = StatusCodes.Status201Created,
-                    message = "Usuario de marketing creado exitosamente",
-                    error = false
+                    Status = statusCode,
+                    Message = message,
+                    NewFolder = newFolder,
+                    Error = false
                 });
             }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
-                    status = StatusCodes.Status500InternalServerError,
-                    message = "Error al crear el historial.",
-                    error = true,
-                    errorMessage = ex.Message
+                    Status = StatusCodes.Status500InternalServerError,
+                    Message = "Error when creating the folder.",
+                    Error = true,
+                    ErrorMessage = ex.Message
                 });
             }
         }
