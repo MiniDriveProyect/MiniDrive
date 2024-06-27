@@ -4,29 +4,57 @@ using MiniDrive.Data;
 using MiniDrive.Services.Interfaces;
 using MiniDrive.Models;
 using MiniDrive.DTOs;
+using AutoMapper;
 
 namespace MiniDrive.Services.Repositories
 {
     public class UsersRepository : IUsersRepository
     {
-        public Task<(User user, string message, HttpStatusCode statusCode)> Add(UserDTO user)
+        private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
+        public UsersRepository(ApplicationDbContext context, IMapper mapper)
         {
-            throw new NotImplementedException();
+            _context = context;
+            _mapper = mapper;
+        }
+        public async Task<(User user, string message, HttpStatusCode statusCode)> Add(UserDTO user)
+        {
+            var newUser = _mapper.Map<User>(user);
+            await _context.Users.AddAsync(newUser);
+            await _context.SaveChangesAsync();
+            return (newUser, "User has been successfully created.", HttpStatusCode.Created);
         }
 
-        public Task<(IEnumerable<User> users, string message, HttpStatusCode statusCode)> GetAll()
+        public async Task<(User user, string message, HttpStatusCode statusCode)> Update(int id, UserDTO user)
         {
-            throw new NotImplementedException();
+            var userUpdate = await _context.Users.FindAsync(id);
+            if (userUpdate!= null)
+            {
+                _mapper.Map(user, userUpdate);
+                _context.Entry(userUpdate).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return (userUpdate, "The user has been updated correctly.", HttpStatusCode.OK);
+            }
+            else
+                return (default(User)!, $"No user found in the database with Id: {id}.", HttpStatusCode.NotFound);
         }
 
-        public Task<(User user, string message, HttpStatusCode statusCode)> GetById(int id)
+        public async Task<(IEnumerable<User> users, string message, HttpStatusCode statusCode)> GetAll()
         {
-            throw new NotImplementedException();
+            var users = await _context.Users.Include(u => u.UserFiles).Include(u => u.Folders).ToListAsync();
+            if (users.Any())
+                return (users, "Users have been successfully obtained.", HttpStatusCode.OK);
+            else
+                return (Enumerable.Empty<User>(), "No users found in the database.", HttpStatusCode.NotFound);
         }
 
-        public Task<(User user, string message, HttpStatusCode statusCode)> Update(int id, UserDTO user)
+        public async Task<(User user, string message, HttpStatusCode statusCode)> GetById(int id)
         {
-            throw new NotImplementedException();
-        }
+            var user = await _context.Users.Include(u => u.UserFiles).Include(u => u.Folders).FirstOrDefaultAsync(u => u.Id.Equals(id));
+            if (user != null)
+                return (user, "User has been successfully obtained.", HttpStatusCode.OK);
+            else
+                return (default(User)!, $"No user found in the database with Id: {id}.", HttpStatusCode.NotFound);
+        }     
     }
 }

@@ -1,32 +1,84 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using MiniDrive.Services;
+using MiniDrive.Models;
+//using MiniDrive.DTOs;
+using System.Threading.Tasks;
+using MiniDrive.Services.Interfaces;
+
 
 namespace MiniDrive.Controllers.Folders
 {
-    [Route("[controller]")]
-    public class FoldersController : Controller
+    //[Authorize]
+    public class FoldersController : ControllerBase
     {
-        private readonly ILogger<FoldersController> _logger;
+        private readonly IFolderRepository _folderRepository;
 
-        public FoldersController(ILogger<FoldersController> logger)
+        public FoldersController(IFolderRepository folderRepository)
         {
-            _logger = logger;
+            _folderRepository = folderRepository;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        [Route("/api/folders")]
+        public async Task<ActionResult<IEnumerable<Folder>>> GetAll(int userId)
         {
-            return View();
+            try
+            {
+                var (folders, message, statusCode) = await _folderRepository.GetAll(userId);
+                if (folders == null || folders == Enumerable.Empty<Folder>())
+                {
+                    return NotFound(message);
+                }
+
+                return Ok(new
+                {
+                    Status = statusCode,
+                    Message = message,
+                    Folders = folders
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error obtaining folders: {ex.Message}");
+            }
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [HttpGet]
+        [Route("api/folders/{id}")]
+        public async Task<IActionResult> GetById(int id, int userId)
         {
-            return View("Error!");
+            try
+            {
+                var (folder, message, statusCode) = await _folderRepository.GetById(id, userId);
+                if (folder == null)
+                {
+                    return NotFound(new
+                    {
+                        status = StatusCodes.Status404NotFound,
+                        message = $"Folder not found: {id}",
+                        error = true
+                    });
+                }
+
+                return Ok(new
+                {
+                    status = StatusCodes.Status200OK,
+                    message = "Folder found",
+                    folder,
+                    error = false
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new
+                {
+                    status = StatusCodes.Status500InternalServerError,
+                    message = "Internal Server Error",
+                    error = true,
+                    errorMessage = ex.Message
+                });
+            }
         }
     }
 }
