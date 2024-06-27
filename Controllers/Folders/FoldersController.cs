@@ -23,13 +23,25 @@ namespace MiniDrive.Controllers.Folders
         [Route("/api/folders")]
         public async Task<ActionResult<IEnumerable<Folder>>> GetAll()
         {
-            var marketing = await _folderRepository.GetAll();
-            return Ok(new
+            try
             {
-                status = StatusCodes.Status200OK,
-                message = "Carpetas listados exitosamente",
-                marketing
-            });
+                var (folders, message, statusCode) = await _folderRepository.GetAll();
+                if (folders == null || folders == Enumerable.Empty<Folder>())
+                {
+                    return NotFound(message);
+                }
+                
+                return Ok(new
+                {
+                    Status = statusCode,
+                    Message = message,
+                    Folders = folders
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error obtaining folders: {ex.Message}");
+            }
         }
 
         [HttpGet]
@@ -44,7 +56,7 @@ namespace MiniDrive.Controllers.Folders
                     return NotFound(new
                     {
                         status = StatusCodes.Status404NotFound,
-                        message = "Carpeta no encontrada",
+                        message = $"Folder not found: {id}",
                         error = true
                     });
                 }
@@ -52,7 +64,7 @@ namespace MiniDrive.Controllers.Folders
                 return Ok(new
                 {
                     status = StatusCodes.Status200OK,
-                    message = "Carpeta encontrada",
+                    message = "Folder found",
                     folder,
                     error = false
                 });
@@ -62,7 +74,7 @@ namespace MiniDrive.Controllers.Folders
                 return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
                     status = StatusCodes.Status500InternalServerError,
-                    message = "Error interno del servidor",
+                    message = "Internal Server Error",
                     error = true,
                     errorMessage = ex.Message
                 });

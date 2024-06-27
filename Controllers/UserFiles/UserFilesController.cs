@@ -11,24 +11,36 @@ namespace MiniDrive.Controllers.UserFiles
     //[Authorize]
     public class UserFilesController : ControllerBase
     {
-        private readonly IUserFileRepository _userfileRepository;
+        private readonly IUserFileRepository _userFileRepository;
 
-        public UserFilesController(IUserFileRepository userfileRepository)
+        public UserFilesController(IUserFileRepository userFileRepository)
         {
-            _userfileRepository = userfileRepository;
+            _userFileRepository = userFileRepository;
         }
 
         [HttpGet]
         [Route("/api/userfiles")]
         public async Task<ActionResult<IEnumerable<UserFile>>> GetAll()
         {
-            var marketing = await _userfileRepository.GetAll();
-            return Ok(new
+            try
             {
-                status = StatusCodes.Status200OK,
-                message = "Usuarios listados exitosamente",
-                marketing
-            });
+                var (userFiles, message, statusCode) = await _userFileRepository.GetAll();
+                if (userFiles == null || userFiles == Enumerable.Empty<UserFile>())
+                {
+                    return NotFound(message);
+                }
+                
+                return Ok(new
+                {
+                    Status = statusCode,
+                    Message = message,
+                    UserFiles = userFiles
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error obtaining userFiles: {ex.Message}");
+            }
         }
 
         [HttpGet]
@@ -37,7 +49,7 @@ namespace MiniDrive.Controllers.UserFiles
         {
             try
             {
-                var (userFile, message, statusCode) = await _userfileRepository.GetById(id);
+                var (userFile, message, statusCode) = await _userFileRepository.GetById(id);
                 if (userFile == null)
                 {
                     return StatusCode((int)statusCode, new
