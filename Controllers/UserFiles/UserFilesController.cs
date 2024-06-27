@@ -20,11 +20,11 @@ namespace MiniDrive.Controllers.UserFiles
 
         [HttpGet]
         [Route("/api/userfiles")]
-        public async Task<ActionResult<IEnumerable<UserFile>>> GetAll()
+        public async Task<ActionResult<IEnumerable<UserFile>>> GetAll(int userId)
         {
             try
             {
-                var (userFiles, message, statusCode) = await _userFileRepository.GetAll();
+                var (userFiles, message, statusCode) = await _userFileRepository.GetAll(userId);
                 if (userFiles == null || userFiles == Enumerable.Empty<UserFile>())
                 {
                     return NotFound(message);
@@ -45,11 +45,11 @@ namespace MiniDrive.Controllers.UserFiles
 
         [HttpGet]
         [Route("api/userfiles/{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(int id, int userId)
         {
             try
             {
-                var (userFile, message, statusCode) = await _userFileRepository.GetById(id);
+                var (userFile, message, statusCode) = await _userFileRepository.GetById(id, userId);
                 if (userFile == null)
                 {
                     return StatusCode((int)statusCode, new

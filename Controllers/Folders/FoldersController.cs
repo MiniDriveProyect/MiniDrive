@@ -21,16 +21,16 @@ namespace MiniDrive.Controllers.Folders
 
         [HttpGet]
         [Route("/api/folders")]
-        public async Task<ActionResult<IEnumerable<Folder>>> GetAll()
+        public async Task<ActionResult<IEnumerable<Folder>>> GetAll(int userId)
         {
             try
             {
-                var (folders, message, statusCode) = await _folderRepository.GetAll();
+                var (folders, message, statusCode) = await _folderRepository.GetAll(userId);
                 if (folders == null || folders == Enumerable.Empty<Folder>())
                 {
                     return NotFound(message);
                 }
-                
+
                 return Ok(new
                 {
                     Status = statusCode,
@@ -46,11 +46,11 @@ namespace MiniDrive.Controllers.Folders
 
         [HttpGet]
         [Route("api/folders/{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(int id, int userId)
         {
             try
             {
-                var (folder, message, statusCode) = await _folderRepository.GetById(id);
+                var (folder, message, statusCode) = await _folderRepository.GetById(id, userId);
                 if (folder == null)
                 {
                     return NotFound(new

@@ -40,27 +40,29 @@ namespace MiniDrive.Services.Repositories
                 return (default(UserFile)!, $"No userFile found in the database with Id: {id}.", HttpStatusCode.NotFound);
         }
 
-        public async Task<(IEnumerable<UserFile> userFiles, string message, HttpStatusCode statusCode)> GetAll()
+        public async Task<(IEnumerable<UserFile> userFiles, string message, HttpStatusCode statusCode)> GetAll(int userId)
         {
-            var userFiles = await _context.UserFiles.Include(f => f.User).Where(f => f.Status!.ToLower() == "active").ToListAsync();
+            var userFiles = await _context.UserFiles.Include(f => f.User)
+            .Where(f => f.Status!.ToLower() == "active" && f.UserId == userId).ToListAsync();
             if (userFiles.Any())
                 return (userFiles, "UserFiles have been successfully obtained.", HttpStatusCode.OK);
             else
                 return (Enumerable.Empty<UserFile>(), "No userFiles found in the database.", HttpStatusCode.NotFound);
         }
 
-        public async Task<(IEnumerable<UserFile> userFiles, string message, HttpStatusCode statusCode)> GetAllDeleted()
+        public async Task<(IEnumerable<UserFile> userFiles, string message, HttpStatusCode statusCode)> GetAllDeleted(int userId)
         {
-            var userFiles = await _context.UserFiles.Include(f => f.User).Where(f => f.Status!.ToLower() == "inactive").ToListAsync();
+            var userFiles = await _context.UserFiles.Include(f => f.User)
+            .Where(f => f.Status!.ToLower() == "inactive" && f.UserId == userId).ToListAsync();
             if (userFiles.Any())
                 return (userFiles, "Deleted userFiles have been successfully obtained.", HttpStatusCode.OK);
             else
                 return (Enumerable.Empty<UserFile>(), "No deleted userFiles found in the database.", HttpStatusCode.NotFound);
         }
 
-        public async Task<(UserFile userFile, string message, HttpStatusCode statusCode)> GetById(int id)
+        public async Task<(UserFile userFile, string message, HttpStatusCode statusCode)> GetById(int id, int userId)
         {
-            var userFile = await _context.UserFiles.Include(f => f.User).FirstOrDefaultAsync(f => f.Id.Equals(id));
+            var userFile = await _context.UserFiles.Include(f => f.User).FirstOrDefaultAsync(f => f.Id.Equals(id) && f.UserId == userId);
             if (userFile != null)
                 return (userFile, "UserFile has been successfully obtained.", HttpStatusCode.OK);
             else
