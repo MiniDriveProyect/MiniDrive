@@ -55,6 +55,17 @@ namespace MiniDrive.Services.Repositories
                 return (user, "User has been successfully obtained.", HttpStatusCode.OK);
             else
                 return (default(User)!, $"No user found in the database with Id: {id}.", HttpStatusCode.NotFound);
-        }     
+        }
+
+        public async Task<bool> VerifyUser(string dato)
+        {
+            var user =  await _context.Users.Where(u => u.Username == dato || u.Email == dato).FirstOrDefaultAsync();
+
+            if(user == null)
+                return true;
+            
+            return false;
+        }
+
     }
 }

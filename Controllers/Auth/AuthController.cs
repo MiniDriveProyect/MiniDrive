@@ -16,18 +16,19 @@ namespace MiniDrive.Controllers.Auth
     {
     
         private readonly IAuthRepository _authRepository;
+        private readonly IUsersRepository _userRepository;
 
-        public AuthController(IAuthRepository authRepository)
+        public AuthController(IAuthRepository authRepository, IUsersRepository userRepository)
         {
             _authRepository = authRepository;
+            _userRepository = userRepository;
         }
 
 
         [HttpPost]
         [Route ("api/auth")]
         
-        public async Task<IActionResult> Login([FromBody]UserDTO userDTO)
-        {
+        public async Task<IActionResult> Login([FromBody]UserDTO userDTO){
 
             if(!ModelState.IsValid)
                 return BadRequest(new {statusCode = StatusCodes.Status400BadRequest, message = "Some required fields are empty!"});
@@ -49,8 +50,7 @@ namespace MiniDrive.Controllers.Auth
        
        [HttpPost]
         [Route("api/register")]
-        public async Task<IActionResult> Register([FromBody] User user)
-        {
+        public async Task<IActionResult> Register([FromBody] User user){
 
             ModelState.Remove(nameof(user.Id));
             ModelState.Remove(nameof(user.UserFiles));
@@ -58,18 +58,40 @@ namespace MiniDrive.Controllers.Auth
 
             if(!ModelState.IsValid)
                 return BadRequest(new {statusCode = StatusCodes.Status400BadRequest, message = "Some required fields are empty!"});
-            try
-            {
+        
+            
+            var verificationUsername = await _userRepository.VerifyUser(user.Username);
+            if(!verificationUsername)
+                return BadRequest(new
+                {
+                    status = StatusCodes.Status400BadRequest,
+                    message = "El nombre de usuario ya existe!",
+                    error = false
+                });
+
+
+            var verificationEmail = await _userRepository.VerifyUser(user.Email);
+
+            if(!verificationEmail)
+                return BadRequest(new
+                {
+                    status = StatusCodes.Status400BadRequest,
+                    message = "El correo ya existe!",
+                    error = false
+                });
+
+            try{
+
                 var result = await _authRepository.Register(user);
                 if (result == null)
-                {
                     return BadRequest(new
                     {
                         status = StatusCodes.Status400BadRequest,
                         message = "No se registro!",
                         error = true
                     });
-                }
+                
+                
 
                 return Ok(new
                 {
@@ -77,8 +99,7 @@ namespace MiniDrive.Controllers.Auth
                     message = "Usuario registrado con éxito",
                     error = false
                 });
-            }
-            catch (Exception ex)
+            }catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
