@@ -9,6 +9,7 @@ namespace MiniDrive.Services.Interfaces
 {
     public interface IAuthRepository
     {
+        Task<User> Register(User user);
         Task<User> Login(UserDTO user);
        string generateToken(User user);
     }

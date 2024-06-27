@@ -26,7 +26,7 @@ namespace MiniDrive.Services.Repositories
 
         public async Task<User> Login(UserDTO user){
 
-            var userLoggin = await _context.Users.FirstOrDefaultAsync(c =>c.Username == user.Username);
+            var userLoggin = await _context.Users.Where(c =>c.Username == user.Username).FirstOrDefaultAsync();
             //verificacio con bycript
             if(userLoggin != null){
                 if(BCrypt.Net.BCrypt.Verify(user.Password, userLoggin.Password)){
@@ -34,6 +34,7 @@ namespace MiniDrive.Services.Repositories
                     return userLoggin;
                 }
                 return null;
+                return userLoggin;
             }
             return null;
 
@@ -64,6 +65,13 @@ namespace MiniDrive.Services.Repositories
            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-       
+        public async Task<User> Register(User user)
+        {
+
+            user.Password =  BCrypt.Net.BCrypt.HashPassword(user.Password, 10);
+            var userRusult = await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+            return userRusult.Entity;
+        }
     }
 }
