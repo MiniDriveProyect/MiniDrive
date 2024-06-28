@@ -1,14 +1,20 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using MiniDrive.DTOs;
 using MiniDrive.Services;
 using MiniDrive.Models;
 //using MiniDrive.DTOs;
 using System.Threading.Tasks;
 using MiniDrive.Services.Interfaces;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace MiniDrive.Controllers.Auth
 {
+    
     public class AuthController : ControllerBase
     {
+    
         private readonly IAuthRepository _authRepository;
 
         public AuthController(IAuthRepository authRepository)
@@ -16,19 +22,51 @@ namespace MiniDrive.Controllers.Auth
             _authRepository = authRepository;
         }
 
-/*         [HttpPost]
-        [Route("api/register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
+
+        [HttpPost]
+        [Route ("api/auth")]
+        
+        public async Task<IActionResult> Login([FromBody]UserDTO userDTO)
         {
+
+            if(!ModelState.IsValid)
+                return BadRequest(new {statusCode = StatusCodes.Status400BadRequest, message = "Some required fields are empty!"});
+           
+            try{
+                var user = await _authRepository.Login(userDTO);
+                if(user == null)
+                    return BadRequest(new {statusCode = StatusCodes.Status400BadRequest, message = "Invalid Credentials"});
+
+                var token  = _authRepository.generateToken(user);
+
+                return Ok(new {statusCode = StatusCodes.Status200OK, token});
+
+            }catch(Exception e){
+
+                return StatusCode(StatusCodes.Status500InternalServerError, new {StatusCode = StatusCodes.Status500InternalServerError, message ="Internal Server Error_ " + e.Message});
+            }
+        }
+       
+       [HttpPost]
+        [Route("api/register")]
+        public async Task<IActionResult> Register([FromBody] User user)
+        {
+
+            ModelState.Remove(nameof(user.Id));
+            ModelState.Remove(nameof(user.UserFiles));
+            ModelState.Remove(nameof(user.Folders));
+
+            if(!ModelState.IsValid)
+                return BadRequest(new {statusCode = StatusCodes.Status400BadRequest, message = "Some required fields are empty!"});
             try
             {
-                var result = await _authRepository.Register(registerDTO);
-                if (!result.Success)
+                var result = await _authRepository.Register(user);
+                if (result == null)
                 {
                     return BadRequest(new
                     {
                         status = StatusCodes.Status400BadRequest,
-                        message = result.Message,
+                        message = "No se registro!",
                         error = true
                     });
                 }
@@ -50,7 +88,7 @@ namespace MiniDrive.Controllers.Auth
                     errorMessage = ex.Message
                 });
             }
-        } */
+        } 
 
 /*         [HttpPost]
         [Route("api/login")]
