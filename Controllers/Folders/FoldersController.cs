@@ -2,8 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MiniDrive.Services;
 using MiniDrive.Models;
-//using MiniDrive.DTOs;
-using System.Threading.Tasks;
 using MiniDrive.Services.Interfaces;
 
 
@@ -55,28 +53,28 @@ namespace MiniDrive.Controllers.Folders
                 {
                     return NotFound(new
                     {
-                        status = StatusCodes.Status404NotFound,
-                        message = $"Folder not found: {id}",
-                        error = true
+                        Status = statusCode,
+                        Message = message,
+                        Error = true
                     });
                 }
 
                 return Ok(new
                 {
-                    status = StatusCodes.Status200OK,
-                    message = "Folder found",
-                    folder,
-                    error = false
+                    Status = statusCode,
+                    Message = message,
+                    Folder = folder,
+                    Error = false
                 });
             }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
-                    status = StatusCodes.Status500InternalServerError,
-                    message = "Internal Server Error",
-                    error = true,
-                    errorMessage = ex.Message
+                    Status = StatusCodes.Status500InternalServerError,
+                    Message = "Internal Server Error",
+                    Error = true,
+                    ErrorMessage = ex.Message
                 });
             }
         }
