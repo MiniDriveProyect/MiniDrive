@@ -6,6 +6,8 @@ using CouponApi.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using MiniDrive.Services.MailerSend;
+using MiniDrive.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,6 +51,10 @@ builder.Services.AddAuthentication(
              };
         }
     );
+
+//registo de email service
+builder.Services.AddHttpClient<IEmailService, EmailService>();
+builder.Services.Configure<MailerSendOptions>(builder.Configuration.GetSection("MailerSend"));
 
 var app = builder.Build();
 
