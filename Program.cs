@@ -30,7 +30,6 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 // Repositories scopes
 builder.Services.AddRepositories(Assembly.GetExecutingAssembly());
 
-
 //Configuration  token JWT
 builder.Services.AddAuthentication(
     options => {
@@ -56,6 +55,16 @@ builder.Services.AddAuthentication(
 builder.Services.AddHttpClient<IEmailService, EmailService>();
 builder.Services.Configure<MailerSendOptions>(builder.Configuration.GetSection("MailerSend"));
 
+//cors 
+builder.Services.AddCors(options=> {
+    options.AddPolicy("Policy", n => { 
+        n.AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+
+    });
+}); 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -65,6 +74,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+//polica del cors!
+app.UseCors("Policy");
 app.MapControllers();
 app.UseHttpsRedirection();
 

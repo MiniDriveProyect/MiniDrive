@@ -28,7 +28,7 @@ namespace MiniDrive.Controllers.Auth
         }
 
         [HttpPost]
-        [Route ("api/auth")]
+        [Route ("api/auth/login")]
         
         public async Task<IActionResult> Login([FromBody]UserDTO userDTO){
 
@@ -51,7 +51,7 @@ namespace MiniDrive.Controllers.Auth
         }
        
        [HttpPost]
-        [Route("api/register")]
+        [Route("api/auth/signup")]
         public async Task<IActionResult> Register([FromBody] User user){
 
             ModelState.Remove(nameof(user.Id));
