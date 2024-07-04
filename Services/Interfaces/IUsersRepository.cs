@@ -6,6 +6,7 @@ namespace MiniDrive.Services.Interfaces
 {
     public interface IUsersRepository
     {
+        Task<bool>VerifyUser(string dato);
         Task<(User user, string message, HttpStatusCode statusCode)> Add(UserDTO user);
         Task<(User user, string message, HttpStatusCode statusCode)> Update(int id, UserDTO user);
         Task<(IEnumerable<User> users, string message, HttpStatusCode statusCode)> GetAll();

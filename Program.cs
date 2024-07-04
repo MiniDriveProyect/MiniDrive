@@ -6,6 +6,8 @@ using CouponApi.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using MiniDrive.Services.MailerSend;
+using MiniDrive.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,24 +30,40 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 // Repositories scopes
 builder.Services.AddRepositories(Assembly.GetExecutingAssembly());
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Issuer"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
-    };
-});
+//Configuration  token JWT
+builder.Services.AddAuthentication(
+    options => {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    }).AddJwtBearer(
+        options => {
+             options.TokenValidationParameters = new TokenValidationParameters{
+
+                //parametros de validacion del token
+                ValidateIssuer  = true,
+                ValidateAudience = true,
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidateIssuerSigningKey = true,
+                ValidAudience = builder.Configuration["Jwt:Audience"],
+                IssuerSigningKey = new  SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+
+             };
+        }
+    );
+
+//registo de email service
+builder.Services.AddHttpClient<IEmailService, EmailService>();
+builder.Services.Configure<MailerSendOptions>(builder.Configuration.GetSection("MailerSend"));
+
+//cors 
+builder.Services.AddCors(options=> {
+    options.AddPolicy("Policy", n => { 
+        n.AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+
+    });
+}); 
 
 var app = builder.Build();
 
@@ -56,6 +74,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+//polica del cors!
+app.UseCors("Policy");
 app.MapControllers();
 app.UseHttpsRedirection();
 
