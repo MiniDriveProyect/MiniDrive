@@ -45,11 +45,13 @@ builder.Services.AddAuthentication(
                 ValidIssuer = builder.Configuration["Jwt:Issuer"],
                 ValidateIssuerSigningKey = true,
                 ValidAudience = builder.Configuration["Jwt:Audience"],
-                IssuerSigningKey = new  SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                IssuerSigningKey = new  SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
 
              };
         }
     );
+
+builder.Services.AddAuthorization();
 
 //registo de email service
 builder.Services.AddHttpClient<IEmailService, EmailService>();
@@ -78,5 +80,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors("Policy");
 app.MapControllers();
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.Run();
