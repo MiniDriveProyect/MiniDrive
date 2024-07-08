@@ -6,6 +6,8 @@ using CouponApi.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using MiniDrive.Services.MailerSend;
+using MiniDrive.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +30,6 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 // Repositories scopes
 builder.Services.AddRepositories(Assembly.GetExecutingAssembly());
 
-
 //Configuration  token JWT
 builder.Services.AddAuthentication(
     options => {
@@ -50,6 +51,20 @@ builder.Services.AddAuthentication(
         }
     );
 
+//registo de email service
+builder.Services.AddHttpClient<IEmailService, EmailService>();
+builder.Services.Configure<MailerSendOptions>(builder.Configuration.GetSection("MailerSend"));
+
+//cors 
+builder.Services.AddCors(options=> {
+    options.AddPolicy("Policy", n => { 
+        n.AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+
+    });
+}); 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -59,6 +74,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+//polica del cors!
+app.UseCors("Policy");
 app.MapControllers();
 app.UseHttpsRedirection();
 
