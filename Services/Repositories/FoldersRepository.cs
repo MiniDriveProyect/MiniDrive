@@ -37,7 +37,7 @@ namespace MiniDrive.Services.Repositories
                 return (folderUpdate, "The folder has been updated correctly.", HttpStatusCode.OK);
             }
             else
-                return (default(Folder)!, $"No folder found in the database with Id: {id}.", HttpStatusCode.NotFound);
+                return (folderUpdate!, $"No folder found in the database with Id: {id}.", HttpStatusCode.NotFound);
         }
 
         public async Task<(IEnumerable<Folder> folders, string message, HttpStatusCode statusCode)> GetAll(int userId)
@@ -47,7 +47,7 @@ namespace MiniDrive.Services.Repositories
             if (folders.Any())
                 return (folders, "Folders have been successfully obtained.", HttpStatusCode.OK);
             else
-                return (Enumerable.Empty<Folder>(), "No folders found in the database.", HttpStatusCode.NoContent);
+                return (folders, "No folders found in the database.", HttpStatusCode.NotFound);
         }
 
         public async Task<(IEnumerable<Folder> folders, string message, HttpStatusCode statusCode)> GetAllDeleted(int userId)
@@ -57,7 +57,7 @@ namespace MiniDrive.Services.Repositories
             if (folders.Any())
                 return (folders, "Deleted folders have been successfully obtained.", HttpStatusCode.OK);
             else
-                return (Enumerable.Empty<Folder>(), "No deleted folders found in the database.", HttpStatusCode.NoContent);
+                return (folders, "No deleted folders found in the database.", HttpStatusCode.NotFound);
         }
 
         public async Task<(Folder folder, string message, HttpStatusCode statusCode)> GetById(int id, int userId)
@@ -66,7 +66,7 @@ namespace MiniDrive.Services.Repositories
             if (folder != null)
                 return (folder, "Folder has been successfully obtained.", HttpStatusCode.OK);
             else
-                return (default(Folder)!, $"No folder found in the database with Id: {id}.", HttpStatusCode.NoContent);
+                return (folder!, $"No folder found in the database with Id: {id}.", HttpStatusCode.NotFound);
         }
 
         public async Task<(IEnumerable<Folder> folders, string message, HttpStatusCode statusCode)> GetAllById(int id, int userId)
@@ -76,7 +76,7 @@ namespace MiniDrive.Services.Repositories
             if (folders.Any())
                 return (folders, "Folders have been successfully obtained.", HttpStatusCode.OK);
             else
-                return (Enumerable.Empty<Folder>(), "No folders found in the database.", HttpStatusCode.NoContent);
+                return (folders, "No folders found in the database.", HttpStatusCode.NotFound);
         }
 
         public async Task<(Folder folder, string message, HttpStatusCode statusCode)> Delete(int id)
@@ -86,7 +86,7 @@ namespace MiniDrive.Services.Repositories
             {
                 if (folder.Status == "active")
                 {
-                    return (folder, $"The Folder with Id: {id} is already active.", HttpStatusCode.NotFound);
+                    return (folder, $"The Folder with Id: {id} is already active.", HttpStatusCode.OK);
                 }
                 else
                 {
@@ -97,7 +97,7 @@ namespace MiniDrive.Services.Repositories
                 }
             }
             else
-                return (default(Folder)!, $"No folder found in the database with Id: {id}.", HttpStatusCode.NotFound);
+                return (folder!, $"No folder found in the database with Id: {id}.", HttpStatusCode.NotFound);
         }
 
         public async Task<(Folder folder, string message, HttpStatusCode statusCode)> Restore(int id)
@@ -107,7 +107,7 @@ namespace MiniDrive.Services.Repositories
             {
                 if (folder.Status == "inactive")
                 {
-                    return (folder, $"The Folder with Id: {id} is already deleted.", HttpStatusCode.NotFound);
+                    return (folder, $"The Folder with Id: {id} is already deleted.", HttpStatusCode.OK);
                 }
                 else
                 {
@@ -118,7 +118,7 @@ namespace MiniDrive.Services.Repositories
                 }
             }
             else
-                return (default(Folder)!, $"No folder found in the database with Id: {id}.", HttpStatusCode.NotFound);
+                return (folder!, $"No folder found in the database with Id: {id}.", HttpStatusCode.NotFound);
         }
     }
 }

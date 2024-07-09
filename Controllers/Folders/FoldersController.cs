@@ -24,10 +24,6 @@ namespace MiniDrive.Controllers.Folders
             try
             {
                 var (folders, message, statusCode) = await _folderRepository.GetAll(userId);
-                if (folders == null || folders == Enumerable.Empty<Folder>())
-                {
-                    return NoContent();
-                }
 
                 return Ok(new
                 {
@@ -49,10 +45,6 @@ namespace MiniDrive.Controllers.Folders
             try
             {
                 var (folder, message, statusCode) = await _folderRepository.GetById(id, userId);
-                if (folder == null)
-                {
-                    return NoContent();
-                }
 
                 return Ok(new
                 {
@@ -82,10 +74,6 @@ namespace MiniDrive.Controllers.Folders
             try
             {
                 var (folders, message, statusCode) = await _folderRepository.GetAllById(id, userId);
-                if (folders == null || folders == Enumerable.Empty<Folder>())
-                {
-                    return NoContent();
-                }
 
                 return Ok(new
                 {
