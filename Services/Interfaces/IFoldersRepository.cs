@@ -13,5 +13,7 @@ namespace MiniDrive.Services.Interfaces
         Task<(IEnumerable<Folder> folders, string message, HttpStatusCode statusCode)> GetAllDeleted(int userId);
         Task<(IEnumerable<Folder> folders, string message, HttpStatusCode statusCode)> GetAll(int userId);
         Task<(Folder folder, string message, HttpStatusCode statusCode)> GetById(int id, int userId);
+        Task<(IEnumerable<Folder> folders, string message, HttpStatusCode statusCode)> GetAllById(int id, int userId);        
+        
     }
 }

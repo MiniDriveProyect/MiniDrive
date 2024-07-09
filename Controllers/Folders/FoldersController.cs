@@ -26,7 +26,7 @@ namespace MiniDrive.Controllers.Folders
                 var (folders, message, statusCode) = await _folderRepository.GetAll(userId);
                 if (folders == null || folders == Enumerable.Empty<Folder>())
                 {
-                    return NotFound(message);
+                    return NoContent();
                 }
 
                 return Ok(new
@@ -51,12 +51,7 @@ namespace MiniDrive.Controllers.Folders
                 var (folder, message, statusCode) = await _folderRepository.GetById(id, userId);
                 if (folder == null)
                 {
-                    return NotFound(new
-                    {
-                        Status = statusCode,
-                        Message = message,
-                        Error = true
-                    });
+                    return NoContent();
                 }
 
                 return Ok(new
@@ -76,6 +71,32 @@ namespace MiniDrive.Controllers.Folders
                     Error = true,
                     ErrorMessage = ex.Message
                 });
+            }
+        }
+
+
+        [HttpGet]
+        [Route("/api/folders/{id}/users/{userId}")]
+        public async Task<ActionResult<IEnumerable<Folder>>> GetAllById(int id,int userId)
+        {
+            try
+            {
+                var (folders, message, statusCode) = await _folderRepository.GetAllById(id, userId);
+                if (folders == null || folders == Enumerable.Empty<Folder>())
+                {
+                    return NoContent();
+                }
+
+                return Ok(new
+                {
+                    Status = statusCode,
+                    Message = message,
+                    Folders = folders
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error obtaining folders: {ex.Message}");
             }
         }
     }

@@ -47,7 +47,7 @@ namespace MiniDrive.Services.Repositories
             if (userFiles.Any())
                 return (userFiles, "UserFiles have been successfully obtained.", HttpStatusCode.OK);
             else
-                return (Enumerable.Empty<UserFile>(), "No userFiles found in the database.", HttpStatusCode.NotFound);
+                return (Enumerable.Empty<UserFile>(), "No userFiles found in the database.", HttpStatusCode.NoContent);
         }
 
         public async Task<(IEnumerable<UserFile> userFiles, string message, HttpStatusCode statusCode)> GetAllDeleted(int userId)
@@ -57,7 +57,7 @@ namespace MiniDrive.Services.Repositories
             if (userFiles.Any())
                 return (userFiles, "Deleted userFiles have been successfully obtained.", HttpStatusCode.OK);
             else
-                return (Enumerable.Empty<UserFile>(), "No deleted userFiles found in the database.", HttpStatusCode.NotFound);
+                return (Enumerable.Empty<UserFile>(), "No deleted userFiles found in the database.", HttpStatusCode.NoContent);
         }
 
         public async Task<(UserFile userFile, string message, HttpStatusCode statusCode)> GetById(int id, int userId)
@@ -66,7 +66,7 @@ namespace MiniDrive.Services.Repositories
             if (userFile != null)
                 return (userFile, "UserFile has been successfully obtained.", HttpStatusCode.OK);
             else
-                return (default(UserFile)!, $"No userFile found in the database with Id: {id}.", HttpStatusCode.NotFound);
+                return (default(UserFile)!, $"No userFile found in the database with Id: {id}.", HttpStatusCode.NoContent);
         }
 
         public async Task<(UserFile userFile, string message, HttpStatusCode statusCode)> Delete(int id)

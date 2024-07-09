@@ -42,31 +42,41 @@ namespace MiniDrive.Services.Repositories
 
         public async Task<(IEnumerable<Folder> folders, string message, HttpStatusCode statusCode)> GetAll(int userId)
         {
-            var folders = await _context.Folders.Include(f => f.UserFiles!).Include(f => f.Folders!).Include(f => f.User)
-            .Where(f => f.Status!.ToLower() == "active" && f.UserId == userId).ToListAsync();
+            var folders = await _context.Folders.Include(f => f.UserFiles!).Include(f => f.Folders!)
+            .Where(f => f.Status!.ToLower() == "active" && f.UserId == userId && f.ParentFolderId == null).ToListAsync();
             if (folders.Any())
                 return (folders, "Folders have been successfully obtained.", HttpStatusCode.OK);
             else
-                return (Enumerable.Empty<Folder>(), "No folders found in the database.", HttpStatusCode.NotFound);
+                return (Enumerable.Empty<Folder>(), "No folders found in the database.", HttpStatusCode.NoContent);
         }
 
         public async Task<(IEnumerable<Folder> folders, string message, HttpStatusCode statusCode)> GetAllDeleted(int userId)
         {
-            var folders = await _context.Folders.Include(f => f.UserFiles).Include(f => f.User)
+            var folders = await _context.Folders.Include(f => f.UserFiles)
             .Where(f => f.Status!.ToLower() == "inactive" && f.UserId == userId).ToListAsync();
             if (folders.Any())
                 return (folders, "Deleted folders have been successfully obtained.", HttpStatusCode.OK);
             else
-                return (Enumerable.Empty<Folder>(), "No deleted folders found in the database.", HttpStatusCode.NotFound);
+                return (Enumerable.Empty<Folder>(), "No deleted folders found in the database.", HttpStatusCode.NoContent);
         }
 
         public async Task<(Folder folder, string message, HttpStatusCode statusCode)> GetById(int id, int userId)
         {
-            var folder = await _context.Folders.Include(f => f.UserFiles).Include(f => f.User).FirstOrDefaultAsync(f => f.Id.Equals(id) && f.UserId == userId);
+            var folder = await _context.Folders.Include(f => f.UserFiles).FirstOrDefaultAsync(f => f.Id.Equals(id) && f.UserId == userId);
             if (folder != null)
                 return (folder, "Folder has been successfully obtained.", HttpStatusCode.OK);
             else
-                return (default(Folder)!, $"No folder found in the database with Id: {id}.", HttpStatusCode.NotFound);
+                return (default(Folder)!, $"No folder found in the database with Id: {id}.", HttpStatusCode.NoContent);
+        }
+
+        public async Task<(IEnumerable<Folder> folders, string message, HttpStatusCode statusCode)> GetAllById(int id, int userId)
+        {
+            var folders = await _context.Folders.Include(f => f.UserFiles!).Include(f => f.Folders!)
+            .Where(f => f.Status!.ToLower() == "active" && f.UserId == userId && f.ParentFolderId == id).ToListAsync();
+            if (folders.Any())
+                return (folders, "Folders have been successfully obtained.", HttpStatusCode.OK);
+            else
+                return (Enumerable.Empty<Folder>(), "No folders found in the database.", HttpStatusCode.NoContent);
         }
 
         public async Task<(Folder folder, string message, HttpStatusCode statusCode)> Delete(int id)

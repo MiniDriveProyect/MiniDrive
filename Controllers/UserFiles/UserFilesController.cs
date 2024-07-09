@@ -26,7 +26,7 @@ namespace MiniDrive.Controllers.UserFiles
                 var (userFiles, message, statusCode) = await _userFileRepository.GetAll(userId);
                 if (userFiles == null || userFiles == Enumerable.Empty<UserFile>())
                 {
-                    return NotFound(message);
+                    return NoContent();
                 }
 
                 return Ok(new
@@ -51,12 +51,7 @@ namespace MiniDrive.Controllers.UserFiles
                 var (userFile, message, statusCode) = await _userFileRepository.GetById(id, userId);
                 if (userFile == null)
                 {
-                    return NotFound(new
-                    {
-                        Status = statusCode,
-                        Message = message,
-                        Error = true
-                    });
+                    return NoContent();
                 }
 
                 return Ok(new
